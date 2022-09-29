@@ -1,0 +1,97 @@
+extends ../layout/base 
+block content 
+
+	section.content
+		.box
+			.box-header.with-border
+				h3.box-title
+					| Editar Registro
+				.box-tools.pull-right
+					button(type='button' data-widget='collapse' data-toggle='tooltip' title='collapse').btn.btn-box-tool
+						i.fa.fa-minus
+
+			.box-body
+				form(role='form' method='post' action='/customers/edit/#{(id==undefined) ? data.id : id}')
+					.row
+
+						.col-xs-6
+							.box-body
+								- if (messages.msg_error) 
+									.alert.alert-danger.alert-dismissable 
+										button.close(type='button' data-dismiss='alert' aria-hidden='true') 
+											| ×
+										h4
+											i.icon.fa.fa-ban
+											| Alert! 
+										| !{messages.msg_error}
+								- if (messages.msg_info) 
+									.alert.alert-success.alert-dismissable 
+										button.close(type='button' data-dismiss='alert' aria-hidden='true') 
+											| ×
+										h4
+											i.icon.fa.fa-ban
+											| Exitoso! 
+										| !{messages.msg_info}
+								.form-group
+									label
+										| EVENTO
+									input(type='text' value="#{data.EVENTO}" name='EVENTO' placeholder='Ingrese EVENTO', autofocus).form-control
+								.form-group
+									label
+										| FECHA EVENTO
+									input(type='date' value="#{data.FECHAEVENTO}" name='FECHAEVENTO' placeholder='Ingrese FECHA EVENTO', autofocus).form-control
+								.form-group
+									label
+										| PM
+									input(type='text' value="#{data.PM}" name='PM' placeholder='Ingrese PM', autofocus).form-control
+								.form-group
+									label
+										| SALON
+									input(type='text' value="#{ (SALON == undefined) ? data.SALON : SALON }" name='SALON' placeholder='Ingrese SALON').form-control
+								.form-group
+									label
+										| ALIMENTOS
+									input(type='text' value="#{ (ALIMENTOS == undefined) ? data.ALIMENTOS : ALIMENTOS }" name='ALIMENTOS' placeholder='Ingrese ALIMENTOS').form-control
+								.form-group
+									label
+										| OTROS
+									input(type='text' value="#{ (BEBIDAS == undefined) ? data.BEBIDAS : BEBIDAS }" name='BEBIDAS' placeholder='Ingrese OTROS').form-control
+								.form-group
+									label
+										| EQUIPOS
+									input(type='text' value="#{ (EQUIPOS == undefined) ? data.EQUIPOS : EQUIPOS }" name='EQUIPOS' placeholder='Ingrese EQUIPOS').form-control
+									.form-group
+									label
+										| ALQUILER EQUIPOS
+									input(type='text' value="#{ (ALQUILEREQUIPOS == undefined) ? data.ALQUILEREQUIPOS : ALQUILEREQUIPOS }" name='ALQUILEREQUIPOS' placeholder='Ingrese ALQUILER EQUIPOS').form-control
+								.form-group
+									label
+										| GANACIA EQUIPOS
+									input(type='text' value="#{ (GANANCIAEQUIPOS == undefined) ? data.GANANCIAEQUIPOS : GANANCIAEQUIPOS }" name='GANANCIAEQUIPOS' placeholder='Ingrese GANANCIA EQUIPOS', disabled).form-control
+								.form-group
+									label
+										| MESEROS
+									input(type='text' value="#{ (MESEROS == undefined) ? data.MESEROS : MESEROS }" name='MESEROS' placeholder='Ingrese MESEROS').form-control
+								.form-group
+									label
+										| CANT MESEROS
+									input(type='text' value="#{ (CANTMESEROS == undefined) ? data.CANTMESEROS : CANTMESEROS }" name='CANTMESEROS' placeholder='Ingrese CANTIDAD MESEROS', disabled).form-control
+								.form-group
+									label
+										| PROPINA
+									input(type='text' value="#{ (PROPINA == undefined) ? data.PROPINA : PROPINA }" name='PROPINA' placeholder='Ingrese PROPINA').form-control
+								.form-group
+									label
+										| TOTAL
+									input(type='text' value="#{ (TOTAL == undefined) ? data.TOTAL : TOTAL }" name='TOTAL' placeholder='Ingrese TOTAL' disabled).form-control
+								.form-group
+									label
+										| VENDEDORA
+									input(type='text' value="#{ (VENDEDORA == undefined) ? data.VENDEDORA : VENDEDORA }" name='VENDEDORA' placeholder='Ingrese VENDEDORA').form-control
+							.box-footer
+								input(type="hidden" name="_method" value="PUT")
+								button(type='submit').btn.btn-primary
+									i.fa.fa-pencil 
+									|  Editar
+								a(href='/customers').btn.btn-primary.pull-right
+									| Regresar

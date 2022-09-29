@@ -1,0 +1,48 @@
+aside.main-sidebar
+	section.sidebar
+		.user-panel
+			.pull-left.image
+				img(src='/images/1651249375144.jpg',alt='User Image').img-circle
+			.pull-left.info
+				p Valentina Estrada
+				a(href='#')
+					i.fa.fa-circle.text-success 
+					| Online
+		form(method='get', action='/customers/date/:').sidebar-form
+			.input-group
+				input(type='date', name='buscar' placeholder='Ingrese fecha').form-control
+				span.input-group-btn
+						button(type='submit', name='', style="Background-color: #ffffffe0; border:none;height: 34px;")
+							img(src="/images/search.png", alt="Buscar",style="width:25px", srcset="")
+							
+		ul.sidebar-menu
+			li.header
+				| Main Navigation
+			li.treeview
+				a(href='#')
+					i.fa.fa-dashboard
+					span
+						| Dashboard
+					span.pull-right-container
+						i.fa.fa-angle-left.pull-right
+				ul.treeview-menu
+					li
+						a(href='/customers')
+							i.fa.fa-circle-o
+							| Cierre diario
+					li
+						a(href='#')
+							i.fa.fa-circle-o
+							| Dashboard V2
+			
+				
+			li
+				a(href='#')
+					i.fa.fa-th
+					span
+						| Widgets
+					span.pull-right-container
+						small.label.pull-right.bg-green
+							| Hot
+
+				

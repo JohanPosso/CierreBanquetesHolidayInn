@@ -1,0 +1,99 @@
+extends ../layout/base 
+block content 
+
+	section.content
+		.box
+			.box-header.with-border
+				h3.box-title
+					| Cierre de banquete diario
+				.box-tools.pull-right
+					button(type='button' data-widget='collapse' data-toggle='tooltip' title='collapse').btn.btn-box-tool
+						i.fa.fa-minus
+			.box-body
+				- if(messages.msg_info)
+					.alert.alert-success.alert-dismissable
+						button.close(type='button' data-dismiss='alert' aria-hidden='true')
+							| ×
+						h4
+							i.icon.fa.fa-check
+							| Exitoso!
+						| !{messages.msg_info}
+				- if(messages.msg_error)
+					.alert.alert-danger.alert-dismissable
+						button.close(type='button' data-dismiss='alert' aria-hidden='true')
+							| ×
+						h4
+							i.icon.fa.fa-ban
+							| Alert!
+						| !{messages.msg_error}
+				a(href='customers/add').pull-left.btn.btn-primary
+					i.fa.fa-plus 
+					|  Añadir Registro
+				br
+				br
+				.data-table
+					table.table.table-bordered
+						tr
+							th
+								| No
+							th
+								| EVENTO
+							th
+								| FECHA EVENTO
+							th
+								| PM
+							th
+								| SALON
+							th
+								| ALIMENTOS
+							th
+								| OTROS
+							th
+								| EQUIPOS
+							th
+								| ALQUILER EQUIPOS
+							th
+								| GANANCIA EQUIPOS
+							th
+								| MESEROS
+							th
+								| CANT MESEROS
+							th
+								| PROPINA
+							th
+								| TOTAL
+							th
+								| VENDEDORA			
+							th
+								| Action
+							if messages.msg_error
+								| !{messages.msg_error}
+							else
+								for row, index in data 
+									tr
+										td #{index+1}
+										td #{row.EVENTO}
+										td #{row.FECHAEVENTO}
+										td #{row.PM}
+										td #{row.SALON}
+										td #{row.ALIMENTOS}
+										td #{row.BEBIDAS}
+										td #{row.EQUIPOS}
+										td #{row.ALQUILEREQUIPOS}
+										td #{row.GANANCIAEQUIPOS}
+										td #{row.MESEROS}
+										td #{row.CANTMESEROS}
+										td #{row.PROPINA}
+										td #{row.TOTAL}
+										td #{row.VENDEDORA}
+
+										td
+											div(style='display:inline-block')
+												a(href='/customers/edit/#{row.id}').btn.btn-sm.btn-primary
+													i.fa.fa-edit
+											| 
+											div(style='display:inline-block')
+												form(method='post' action='/customers/delete/#{row.id}')
+													input(type="hidden" name="_method" value="DELETE")
+													button.btn.btn-sm.btn-danger(type='submit')
+														i.fa.fa-remove

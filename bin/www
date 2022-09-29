@@ -1,0 +1,6 @@
+var app = require("../app");
+const port = 3000;
+
+app.listen(process.env.PORT || port, () => {
+  console.log(`Application running in port: ${process.env.PORT || port}`);
+});
