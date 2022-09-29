@@ -11,13 +11,11 @@ require("dotenv").config();
 const methodOverride = require("method-override");
 
 const routerApi = require("./routes/index");
-// const connections = require("./db/conexion.db");
 const routesCustomer = require("./routes/customers");
 const app = express();
-// app.use(connections);
 
-app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
@@ -42,10 +40,10 @@ app.use("/", routesCustomer);
 routerApi(app);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  const err = new Error("Not Found");
-  err.status = 404;
-  next(err);
-});
+// app.use(function (req, res, next) {
+//   const err = new Error("Not Found");
+//   err.status = 404;
+//   next(err);
+// });
 
 module.exports = app;
