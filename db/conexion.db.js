@@ -1,20 +1,21 @@
-const express = require("express");
-const connection = require("express-myconnection");
-const mysql = require("mysql");
-const app = express();
+// const mysql = require("mysql");
 
-app.use(
-  connection(
-    mysql,
-    {
-      host: process.env.HOST,
-      user: process.env.USER,
-      password: process.env.PASSWORD,
-      port: process.env.PORTDB,
-      database: process.env.DATABASE,
-    },
-    "pool"
-  )
-);
+// var connection = mysql.createConnection({
+//   host: process.env.HOST,
+//   user: process.env.USER,
+//   password: process.env.PASSWORD,
+//   port: process.env.PORTDB,
+//   database: process.env.DATABASE,
+// });
 
-module.exports = app;
+// connection.connect(function (error) {
+//   if (error) {
+//     throw error;
+//   } else {
+//     console.log("Conexion correcta.");
+//   }
+// });
+
+// // connection.end();
+
+// module.exports = connection;

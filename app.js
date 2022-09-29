@@ -11,10 +11,10 @@ require("dotenv").config();
 const methodOverride = require("method-override");
 
 const routerApi = require("./routes/index");
-const connections = require("./db/conexion.db");
+// const connections = require("./db/conexion.db");
 const routesCustomer = require("./routes/customers");
 const app = express();
-app.use(connections);
+// app.use(connections);
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");

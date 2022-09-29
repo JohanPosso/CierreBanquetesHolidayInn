@@ -1,28 +1,43 @@
 const express = require("express");
 const router = express.Router();
 
+const mysql = require("mysql");
+
+var connection = mysql.createConnection({
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  port: process.env.PORTDB,
+  database: process.env.DATABASE,
+});
+
+connection.connect(function (error) {
+  if (error) {
+    throw error;
+  } else {
+    console.log("Conexion correcta.");
+  }
+});
+
 /* GET Customer page. */
 
 router.get("/", function (req, res, next) {
-  req.getConnection(function (err, connection) {
-    const query = connection.query(
-      `SELECT * FROM customer ; `,
-      function (err, rows) {
-        if (err) var errornya = ("Error Selecting : %s ", err);
-        req.flash("msg_error", errornya);
-        res.render("customer/list", { title: "Customers", data: rows });
-      }
-    );
-    // console.log(query.sql);
-  });
+  const query = connection.query(
+    `SELECT * FROM customer ; `,
+    function (err, rows) {
+      if (err) var errornya = ("Error Selecting : %s ", err);
+      req.flash("msg_error", errornya);
+      res.render("customer/list", { title: "Customers", data: rows });
+    }
+  );
+  // console.log(query.sql);
 });
 
 /* Get date */
 router.get("/date/:fecha", function (req, res, next) {
   let fecha = req.param("buscar");
-  const dete = req.getConnection(function (err, connection) {
-    const query = connection.query(
-      `SELECT
+  const query = connection.query(
+    `SELECT
 					  (
 						sum(SALON) 
 					  ) as TOTALSALON,
@@ -48,80 +63,65 @@ router.get("/date/:fecha", function (req, res, next) {
 					  sum(TOTAL) 
 					  ) as TOTALTOTAL 
 					  from customer where FECHAEVENTO = '${fecha}'`,
-      function hand(err, max) {
-        if (err) var errornya = ("Error Selecting : %s ", err);
-        req.flash("msg_error", errornya);
+    function hand(err, max) {
+      if (err) var errornya = ("Error Selecting : %s ", err);
+      req.flash("msg_error", errornya);
 
-        req.getConnection(function (err, connection) {
-          const query = connection.query(
-            `select * from customer where FECHAEVENTO = '${fecha}'`,
-            function (err, rows) {
-              if (err) var errornya = ("Error Selecting : %s ", err);
-              req.flash("msg_error", errornya);
-              res.render("customer/list-date", {
-                fecha,
-                data: rows,
-                johan: max,
-              });
-            }
-          );
-        });
-      }
-    );
-
-    // console.log(query.sql);
-  });
+      const query = connection.query(
+        `select * from customer where FECHAEVENTO = '${fecha}'`,
+        function (err, rows) {
+          if (err) var errornya = ("Error Selecting : %s ", err);
+          req.flash("msg_error", errornya);
+          res.render("customer/list-date", {
+            fecha,
+            data: rows,
+            johan: max,
+          });
+        }
+      );
+    }
+  );
 });
 
 /* Get date */
 
 router.delete("/delete/(:id)", function (req, res, next) {
-  req.getConnection(function (err, connection) {
-    const customer = {
-      id: req.params.id,
-    };
+  const customer = {
+    id: req.params.id,
+  };
 
-    const delete_sql = "delete from customer where ?";
-    req.getConnection(function (err, connection) {
-      const query = connection.query(
-        delete_sql,
-        customer,
-        function (err, result) {
-          if (err) {
-            const errors_detail = ("Error Delete : %s ", err);
-            req.flash("msg_error", errors_detail);
-            res.redirect("/customers");
-          } else {
-            req.flash("msg_info", "El registro se elimino exitosamente");
-            res.redirect("/customers");
-          }
-        }
-      );
-    });
+  const delete_sql = "delete from customer where ?";
+  const query = connection.query(delete_sql, customer, function (err, result) {
+    if (err) {
+      const errors_detail = ("Error Delete : %s ", err);
+      req.flash("msg_error", errors_detail);
+      res.redirect("/customers");
+    } else {
+      req.flash("msg_info", "El registro se elimino exitosamente");
+      res.redirect("/customers");
+    }
   });
 });
 
 router.get("/edit/(:id)", function (req, res, next) {
-  req.getConnection(function (err, connection) {
-    const query = connection.query(
-      "SELECT * FROM customer where id=" + req.params.id,
-      function (err, rows) {
-        if (err) {
-          const errornya = ("Error Selecting : %s ", err);
-          req.flash("msg_error", errors_detail);
+  const query = connection.query(
+    "SELECT * FROM customer where id=" + req.params.id,
+    function (err, rows) {
+      if (err) {
+        const errornya = ("Error Selecting : %s ", err);
+        req.flash("msg_error", errors_detail);
+        res.redirect("/customers");
+      } else {
+        if (rows.length <= 0) {
+          req.flash("msg_error", "Customer can't be find!");
           res.redirect("/customers");
         } else {
-          if (rows.length <= 0) {
-            req.flash("msg_error", "Customer can't be find!");
-            res.redirect("/customers");
-          } else {
-            console.log(rows, "obtenerrrrrrrrrrrrrrrrr");
-            res.render("customer/edit", { title: "Edit ", data: rows[0] });
-          }
+          console.log(rows, "obtenerrrrrrrrrrrrrrrrr");
+          res.render("customer/edit", { title: "Edit ", data: rows[0] });
         }
       }
-    );
-  });
+    }
+  );
 });
 
 router.put("/edit/(:id)", function (req, res, next) {
@@ -176,37 +176,35 @@ router.put("/edit/(:id)", function (req, res, next) {
     };
     const update_sql = "update customer SET ? where id = " + req.params.id;
 
-    req.getConnection(function (err, connection) {
-      const query = connection.query(
-        update_sql,
-        customer,
-        function (err, result) {
-          if (err) {
-            const errors_detail = ("Error Update : %s ", err);
-            req.flash("msg_error", errors_detail);
-            res.render("customer/edit", {
-              EVENTO: req.params("EVENTO"),
-              FECHAEVENTO: req.params("FECHAEVENTO"),
-              PM: req.params("PM"),
-              SALON: req.params("SALON"),
-              ALIMENTOS: req.params("ALIMENTOS"),
-              BEBIDAS: req.params("BEBIDAS"),
-              EQUIPOS: req.params("EQUIPOS"),
-              ALQUILEREQUIPOS: req.params("ALQUILEREQUIPOS"),
-              GANANCIAEQUIPOS: req.params("GANANCIAEQUIPOS"),
-              MESEROS: req.params("MESEROS"),
-              CANTMESEROS: req.params("CANTMESEROS"),
-              PROPINA: req.params("PROPINA"),
-              TOTAL: req.params("TOTAL"),
-              VENDEDORA: req.params("VENDEDORA"),
-            });
-          } else {
-            req.flash("msg_info", "El registro se actualizo exitosamente");
-            res.redirect("/customers/edit/" + req.params.id);
-          }
+    const query = connection.query(
+      update_sql,
+      customer,
+      function (err, result) {
+        if (err) {
+          const errors_detail = ("Error Update : %s ", err);
+          req.flash("msg_error", errors_detail);
+          res.render("customer/edit", {
+            EVENTO: req.params("EVENTO"),
+            FECHAEVENTO: req.params("FECHAEVENTO"),
+            PM: req.params("PM"),
+            SALON: req.params("SALON"),
+            ALIMENTOS: req.params("ALIMENTOS"),
+            BEBIDAS: req.params("BEBIDAS"),
+            EQUIPOS: req.params("EQUIPOS"),
+            ALQUILEREQUIPOS: req.params("ALQUILEREQUIPOS"),
+            GANANCIAEQUIPOS: req.params("GANANCIAEQUIPOS"),
+            MESEROS: req.params("MESEROS"),
+            CANTMESEROS: req.params("CANTMESEROS"),
+            PROPINA: req.params("PROPINA"),
+            TOTAL: req.params("TOTAL"),
+            VENDEDORA: req.params("VENDEDORA"),
+          });
+        } else {
+          req.flash("msg_info", "El registro se actualizo exitosamente");
+          res.redirect("/customers/edit/" + req.params.id);
         }
-      );
-    });
+      }
+    );
   } else {
     console.log(errors);
     errors_detail = "<p>Sory there are error</p><ul>";
@@ -275,37 +273,35 @@ router.post("/add", function (req, res, next) {
     };
 
     const insert_sql = "INSERT INTO customer SET ?";
-    req.getConnection(function (err, connection) {
-      const query = connection.query(
-        insert_sql,
-        customer,
-        function (err, result) {
-          if (err) {
-            const errors_detail = ("Error Insert : %s ", err);
-            req.flash("msg_error", errors_detail);
-            res.render("customer/add-customer", {
-              EVENTO: req.params("EVENTO"),
-              FECHAEVENTO: req.params("FECHAEVENTO"),
-              PM: req.params("PM"),
-              SALON: req.params("SALON"),
-              ALIMENTOS: req.params("ALIMENTOS"),
-              BEBIDAS: req.params("BEBIDAS"),
-              EQUIPOS: req.params("EQUIPOS"),
-              ALQUILEREQUIPOS: req.params("ALQUILEREQUIPOS"),
-              GANANCIAEQUIPOS: req.params("GANANCIAEQUIPOS"),
-              MESEROS: req.params("MESEROS"),
-              CANTMESEROS: req.params("CANTMESEROS"),
-              PROPINA: req.params("PROPINA"),
-              TOTAL: req.params("TOTAL"),
-              VENDEDORA: req.params("VENDEDORA"),
-            });
-          } else {
-            req.flash("msg_info", "Registro creado exitosamente");
-            res.redirect("/customers");
-          }
+    const query = connection.query(
+      insert_sql,
+      customer,
+      function (err, result) {
+        if (err) {
+          const errors_detail = ("Error Insert : %s ", err);
+          req.flash("msg_error", errors_detail);
+          res.render("customer/add-customer", {
+            EVENTO: req.params("EVENTO"),
+            FECHAEVENTO: req.params("FECHAEVENTO"),
+            PM: req.params("PM"),
+            SALON: req.params("SALON"),
+            ALIMENTOS: req.params("ALIMENTOS"),
+            BEBIDAS: req.params("BEBIDAS"),
+            EQUIPOS: req.params("EQUIPOS"),
+            ALQUILEREQUIPOS: req.params("ALQUILEREQUIPOS"),
+            GANANCIAEQUIPOS: req.params("GANANCIAEQUIPOS"),
+            MESEROS: req.params("MESEROS"),
+            CANTMESEROS: req.params("CANTMESEROS"),
+            PROPINA: req.params("PROPINA"),
+            TOTAL: req.params("TOTAL"),
+            VENDEDORA: req.params("VENDEDORA"),
+          });
+        } else {
+          req.flash("msg_info", "Registro creado exitosamente");
+          res.redirect("/customers");
         }
-      );
-    });
+      }
+    );
   } else {
     console.log(errors);
     errors_detail = "<p>Hay un error!</p><ul>";
