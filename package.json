@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "lint-fix": "eslint ./routes --fix"
+    "lint-fix": "eslint ./ --fix"
   },
   "dependencies": {
     "body-parser": "1.20.0",
@@ -16,7 +16,7 @@
     "express-myconnection": "1.0.4",
     "express-session": "1.17.3",
     "express-template-to-pdf": "1.0.5",
-    "express-validator": "6.14.2",
+    "express-validator": "2.21.0",
     "jade": "1.11.0",
     "method-override": "2.3.10",
     "morgan": "1.10.0",

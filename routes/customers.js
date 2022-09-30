@@ -1,26 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql2");
+const connection = require("../db/conexion.db");
 
-const connection = mysql.createPool({
-  connectionLimit: 100,
-  connectTimeout: 60000,
-  acquireTimeout: 60000,
-  timeout: 1000,
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  port: process.env.PORTDB,
-  database: process.env.DATABASE,
-});
-
-connection.on("acquire", function (connection) {
-  console.log("Connection %d acquired", connection.threadId);
-});
-
-connection.on("connection", function (connection) {
-  connection.query("SET SESSION auto_increment_increment=1");
-});
 /* GET Customer page. */
 
 router.get("/", function (req, res, next) {
@@ -32,12 +13,12 @@ router.get("/", function (req, res, next) {
       res.render("customer/list", { title: "Customers", data: rows });
     }
   );
-  // console.log(query.sql);
 });
 
 /* Get date */
 router.get("/date/:fecha", function (req, res, next) {
   let fecha = req.param("buscar");
+
   const query = connection.query(
     `SELECT
 					  (
@@ -93,6 +74,7 @@ router.delete("/delete/(:id)", function (req, res, next) {
   };
 
   const delete_sql = "delete from customer where ?";
+
   const query = connection.query(delete_sql, customer, function (err, result) {
     if (err) {
       const errors_detail = ("Error Delete : %s ", err);
@@ -118,7 +100,6 @@ router.get("/edit/(:id)", function (req, res, next) {
           req.flash("msg_error", "Customer can't be find!");
           res.redirect("/customers");
         } else {
-          console.log(rows, "obtenerrrrrrrrrrrrrrrrr");
           res.render("customer/edit", { title: "Edit ", data: rows[0] });
         }
       }
@@ -275,6 +256,7 @@ router.post("/add", function (req, res, next) {
     };
 
     const insert_sql = "INSERT INTO customer SET ?";
+
     const query = connection.query(
       insert_sql,
       customer,
@@ -340,6 +322,5 @@ router.get("/add", function (req, res, next) {
   });
 });
 
-// connection.end();
 connection.on("error", function () {});
 module.exports = router;

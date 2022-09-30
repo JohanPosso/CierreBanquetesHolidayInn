@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
-// const expressValidator = require("express-validator");
+const expressValidator = require("express-validator");
 const methodOverride = require("method-override");
 
 const routerApi = require("./routes/index");
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: "secretpass123456" }));
 app.use(flash());
-// app.use(expressValidator());
+app.use(expressValidator());
 app.use(
   methodOverride(function (req, res) {
     if (req.body && typeof req.body === "object" && "_method" in req.body) {
@@ -40,10 +40,10 @@ app.use("/", routesCustomer);
 routerApi(app);
 
 // catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   const err = new Error("Not Found");
-//   err.status = 404;
-//   next(err);
-// });
+app.use(function (req, res, next) {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+});
 
 module.exports = app;
